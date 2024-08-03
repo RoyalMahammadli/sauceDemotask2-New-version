@@ -1,0 +1,7 @@
+{
+    "mainUrl":"https://www.saucedemo.com/v1/index.html",
+    "inventoryUrl":"https://www.saucedemo.com/v1/inventory.html",
+    "checkoutUrl":"https://www.saucedemo.com/v1/checkout-step-one.html",
+    "completeUrl":"https://www.saucedemo.com/v1/checkout-complete.html"
+
+}
