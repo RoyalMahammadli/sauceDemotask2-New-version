@@ -1,56 +1,99 @@
+import basketCart from "../pages/sauceDemo/basketCart";
+import checkOut from "../pages/sauceDemo/checkOut";
+import checkOutComplete from "../pages/sauceDemo/checkOutComplete";
+import homeSaucePage from "../pages/sauceDemo/homeSaucePage";
+import inventorySaucepage from "../pages/sauceDemo/inventorySaucepage";
 describe("template spec", () => {
-  it("Navigate to the Website", () => {
+  beforeEach(() => {
     cy.visit("/v1/index.html");
-    cy.fixture("url").then(urlLink => {
-      cy.checkUrl(urlLink.mainUrl);
+    cy.fixture("url").then(siteUrl => {
+      cy.checkUrl(siteUrl.mainUrl);
     });
   });
-
-  it("Login ", () => {
-    cy.login();
-  });
-
-  it("Verify Main Page", () => {
-    cy.log(cy.contains("Products"));
-    cy.fixture("url").then(urlLink => {
-      cy.checkUrl(urlLink.inventoryUrl);
+  it("Should log in to site ", () => {
+    cy.fixture("userData").then(value => {
+      const hsp = new homeSaucePage();
+      hsp.fillUsernameInput(value.userName);
+      hsp.fillPasswordInput(value.password);
+      hsp.clickLogin();
     });
   });
-
-  it("Add randomly selected item to the shopping cart", () => {
-    cy.selectRandomItem();
+  it("Verify that you are logged in and in the main page", () => {
+    cy.fixture("userData").then(value => {
+      const isp = new inventorySaucepage();
+      isp.fillUsernameInput(value.userName);
+      isp.fillPasswordInput(value.password);
+      isp.clickLogin();
+      isp.findProductText()
+    });
   });
-
-  it("Open Shopping Cart", () => {
-    cy.get("[class='fa-layers-counter shopping_cart_badge']").click();
-    cy.get(".cart_item").should("exist");
-  });
-
+  it("Add randomly selected item to the shopping cart",()=>{
+    cy.fixture("userData").then(value => {
+      const isp = new inventorySaucepage();
+      isp.fillUsernameInput(value.userName);
+      isp.fillPasswordInput(value.password);
+      isp.clickLogin();
+      isp.findProductText()
+      isp.selectRandomitem()
+    });
+  })
+  it("Open shopping cart",()=>{
+    cy.fixture("userData").then(value => {
+      const isp = new inventorySaucepage();
+      isp.fillUsernameInput(value.userName);
+      isp.fillPasswordInput(value.password);
+      isp.clickLogin();
+      isp.findProductText()
+      isp.selectRandomitem()
+      isp.openShopCart()
+    });
+  })
   it("Proceed to Checkout", () => {
-    cy.get(".btn_action.checkout_button").click();
-    cy.fixture("url").then(urlLink => {
-      cy.checkUrl(urlLink.checkoutUrl);
+    cy.fixture("userData").then(value => {
+      const bc = new basketCart();
+      bc.fillUsernameInput(value.userName);
+      bc.fillPasswordInput(value.password);
+      bc.clickLogin();
+      bc.findProductText()
+      bc.selectRandomitem()
+      bc.openShopCart()
+      bc.proceedCheckout()
     });
-    cy.get("[class='btn_primary cart_button']").click();
-    cy.get("[data-test='error']").should("contain", "First Name is required");
+ 
   });
-
-  it("Enter User Info", () => {
-    cy.enterUserInfo();
+  it("Enter crediantials and click", () => {
+    cy.fixture("userData").then(value => {
+      const ch = new checkOut()
+      ch.fillUsernameInput(value.userName);
+      ch.fillPasswordInput(value.password);
+      ch.clickLogin();
+      ch.findProductText()
+      ch.selectRandomitem()
+      ch.openShopCart()
+      ch.proceedCheckout()
+      ch.enterCrediantials()
+      ch.clickContinue()
+      ch.clickFinish()
+    });
+ 
   });
-
-  it("Continue Checkout", () => {
-    cy.get("[class='btn_primary cart_button']").click();
-  });
-
-  it("Complete Order", () => {
-    cy.get("[class='btn_action cart_button']").click();
+  it.only("complete order and fin complete message", () => {
+    cy.fixture("userData").then(value => {
+      const coc = new checkOutComplete()
+      coc.fillUsernameInput(value.userName);
+      coc.fillPasswordInput(value.password);
+      coc.clickLogin();
+      coc.findProductText()
+      coc.selectRandomitem()
+      coc.openShopCart()
+      coc.proceedCheckout()
+      coc.enterCrediantials()
+      coc.clickContinue()
+      coc.clickFinish()
+      coc.findCompleteMessage()
+      
+    });
+ 
   });
   
-  it("Verify Order Success", () => {
-    cy.contains("THANK YOU FOR YOUR ORDER");
-    cy.fixture("url").then(urlLink => {
-      cy.checkUrl(urlLink.completeUrl);
-    });
-  });
 });
